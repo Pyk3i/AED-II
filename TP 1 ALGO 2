@@ -1,0 +1,202 @@
+
+\documentclass[10pt,a4paper]{article}
+
+\input{AEDmacros}
+\usepackage{caratula} % Version modificada para usar las macros de algo1 de ~> https://github.com/bcardiff/dc-tex
+\usepackage{amsmath}
+
+\titulo{Descripci\'on del tp}
+\subtitulo{Subtítulo del tp}
+
+\fecha{\today}
+
+\materia{Algoritmos y Estructuras de Datos II}
+\grupo{Grupo 42}
+
+\integrante{Ont\'on Favio}{001/01}{email1@dominio.com}
+\integrante{Kozak, Santiago}{160/24}{santiago@arbolitoloco.xyz}
+\integrante{Aular, Juan}{545/24}{juan.aularrhode@gmail.com}
+\integrante{Apellido, Nombre4}{004/01}{email4@dominio.com}
+% Pongan cuantos integrantes quieran
+
+% Declaramos donde van a estar las figuras
+% No es obligatorio, pero suele ser comodo
+\graphicspath{{../static/}}
+
+\begin{document}
+\maketitle
+\section{Especificación de procedimientos}
+\subsection{Ejercicio 1}
+%ej1)
+\begin{proc}{grandesCiudades}{\In ciudades : \TLista{Ciudad}}{\TLista{Ciudad}}
+
+    \requiere{noNombresRepetidos(ciudades)}
+
+    \asegura{sinRepetidos(Res) \land tieneLosElementosCorrectos(Res,ciudades)}
+
+    \pred{noNombresRepetidos}{s: \TLista{Ciudad}}{(\forall i,j:\ent)((0\leq i,j <|s| \land  i\neq j)
+     \implicaLuego s[i]_0 \neq s[j]0)}
+
+     \pred{sinRepetidos}{s: \TLista{Ciudad}}{\paraTodo{e}{\TLista{Ciudad}}{cantidadApariciones(e,s) \leq 1}}
+
+     \pred{tieneLosElementosCorrectos}{s1: \TLista{Ciudad}, s2: \TLista{Ciudad} }
+     {\paraTodo[unalinea]{e}{Ciudad}{e \in s1 \longleftrightarrow (e \in s2 \land e_1 > 50.000)}}
+
+     \aux{cantidadApariciones}{e: Ciudad, s: \TLista{Ciudad}}{\ent}{\sum_{i = 0}^{|s| - 1} IfThenElse(e = s[i],1,0)}
+
+\end{proc}
+
+\subsection{Ejercicio 2}
+%ej2)
+
+\begin{proc}{sumaDeHabitantes}{\In menoresDeCiudad: \TLista{Ciudad}, \In mayoresDeCiudad: \TLista{Ciudad}}{\TLista{Ciudad}}
+
+    \requiere{mismosNombres(menoresDeCiudad, mayoresDeCiudad) \land  noNombresRepetidos(menoresDeCiudad)\\
+    \land noNombresRepetidos(mayoresDeCiudad) \land noHabitantesNegativos(mayoresDeCiudad)\\
+    \land noHabitantesNegativos(menoresDeCiudad)}
+
+    \asegura{mismosNombres(Res, menoresDeCiudad) \land noNombresRepetidos(Res)\ 
+    \land habitantesEsLaSumaDeMenoresYMayores(Res, menoresDeCiudad, mayoresDeCiudad) }
+
+    \pred{mismosNombres}{s1: \TLista{Ciudad}, s2: \TLista{Ciudad}}{\paraTodo[unalinea]{c}{String}{apareceLaCiudad(c,s1) \longleftrightarrow apareceLaCiudad(c,s2)}}
+
+    \pred{noHabitantesNegativos}{s: \TLista{Ciudad}}{\paraTodo[unalinea]{i}{\ent}{0\leq i < |s| \implicaLuego s[i]_1\geq 0}}
+
+    \pred{habitantesEsLaSumaDeMenoresYMayores}{s1: \TLista{Ciudad}, s2: \TLista{Ciudad}, s3: \TLista{Ciudad}}
+    {\paraTodo[unalinea]{i,j,k}{\ent}
+    {(0\leq i,j,k < |s1| \yLuego (s1[i]_0 = s2[j]_0 \land s1[i]_0 = s3[k]_0)) \implicaLuego s1[i]_1 = s2[j]_1 + s3[k]_1 }}
+
+    \pred{apareceLaCiudad}{c: String, s: \TLista{Ciudad}}{\existe[unalinea]{i}{\ent}{0 \leq i < |s|  \yLuego s[i]_0 = c}}
+
+
+\end{proc}
+
+\subsection{Ejercicio 3}
+%ej3)
+\begin{proc}{hayCamino}{\In distancias: \TLista{\TLista{\ent}}, \In desde: \ent, \In hasta: \ent}{Bool}
+
+    \requiere{0\leq desde, hasta < |distancias| \land esMatrizValida(distancias)}
+
+    \asegura{Res = True \longleftrightarrow (\existe[unalinea]{s}{\TLista{\ent}}{esCamino(s, distancias, desde, hasta)})}
+
+    \pred{esCamino}{s: \TLista{\ent}, distancias: \TLista{\TLista{\ent}}, desde: \ent, hasta: \ent}
+    {|s| \geq 2 \yLuego s[0] = desde \land s[|s|-1] = hasta \land todasSonCiudadesValidas(s, distancias) \yLuego \\ \paraTodo[unalinea]{k}{\ent}{0 \leq k < |s|-1 \implicaLuego distancias[s[k]][s[k+1]]\neq 0}} 
+
+    \pred{todasSonCiudadesValidas}{s: \TLista{\ent}, distancias: \TLista{\TLista{\ent}}}{\paraTodo[unalinea]{i}{\ent}{0 \leq i < |s| \implicaLuego s[i] < |distancias|}}
+
+    \pred{esMatrizValida}{mat: \TLista{\TLista{\ent}}}{esMatriz(mat) \land esMatrizCuadrada(mat) \
+    \yLuego esIgualASuTraspuesta(mat) \land diagonalCeros(mat)}
+
+    \pred{esMatriz}{s: \TLista{\TLista{\ent}}}{\paraTodo[unalinea]{i,j}{\ent}{0 \leq i,j < |s| \implicaLuego |s[i]| = |s[j]|}}
+
+    \pred{esMatrizCuadrada}{s: \TLista{\TLista{\ent}}}{\paraTodo[unalinea]{i}{\ent}{0 \leq i < |s| \implicaLuego |s[i]| = |s|}}
+
+    \pred{esIgualASuTraspuesta}{s: \TLista{\TLista{\ent}}}{\paraTodo[unalinea]{i,j}{\ent}{0 \leq i,j < |s| \implicaLuego s[i][j] = s[j][i]}}
+
+    \pred{diagonalCeros}{s: \TLista{\TLista{\ent}}}{\paraTodo[unalinea]{i}{\ent}{0 \leq i < |s| \implicaLuego s[i][i] = 0}}
+
+\end{proc}
+
+\subsection{Ejercicio 4}
+%ej4)
+
+\begin{proc}{cantidadCaminosConNsaltos}{\Inout conexion : \TLista{\TLista{\ent}}, \In n: \ent}
+
+    \requiere{conexion = CONEXION_0 \land n\geq 1 \land esMatrizConexionValida(conexion)}
+
+    \asegura{[|CONEXION_0| = 0 \land |conexion| = 0] \lor [|CONEXION_0| > 0 \land \existe{s}{\TLista{\TLista{\TLista{\ent}}}}{losElementosSonMatricesCuadradasDeIgualDimension(s) \land |s| = n \yLuego s[0] = CONEXION_0 \land s[n-1] = conexion 
+    \land \paraTodo{i}{\ent}{0 \leq i < |s|-1 \implicaLuego M2esProductoDeM1porM3(s[i],s[i+1],CONEXION_0)}}]}
+
+    \pred{esMatrizConexionValida}{s: \TLista{\TLista{\ent}}}{esMatrizValida(s) \yLuego soloUnosYceros(s)}
+
+    \pred{soloUnosYceros}{s: \TLista{\TLista{\ent}}}{\paraTodo[unalinea]{i,j}{\ent}{0 \leq i,j < |s| \implicaLuego (s[i][j] = 0 \lor s[i][j] = 1)}}
+
+    \pred{losElementosSonMatricesCuadradasDeIgualDimension}{s: \TLista{\TLista{\TLista{\ent}}}}
+    {\paraTodo[unalinea]{i,j}{\ent}{0 \leq i< |s| \implicaLuego (esMatriz(s[i]) \land esMatrizCuadrada(s[i]) \land |s[i]| = |CONEXION_0| )}}
+
+    \pred{M2esProductoDeM1porConexion0}{M1: \TLista{\TLista{\ent}}, M2: \TLista{\TLista{\ent}}, M3: \TLista{\TLista{\ent}}}
+    {\paraTodo[unalinea]{i,j}{\ent}{0 \leq i< |M3| \implicaLuego M2[i][j] = \sum_{k = 0}^{|M3| - 1} M1[i][k]*M3[k][j]}}
+
+
+\end{proc}
+
+\subsection{Ejercicio 5}
+
+\begin{proc}{caminoMinimo}{\In origen: \ent, \In destino: \ent, \In distancias: \TLista{\TLista{\ent}}}{\TLista{\ent}}
+	\requiere{0 \leq origen, destino < |distancias| \land esMatrizDistanciaValida(distancias)}
+ 
+	\asegura{[\neg existeCamino(distancias, origen, destino) \land |res| = 0] \lor [existeCamino(distancias, origen, destino) \land esCamino(res, distancias, origen, destino) \yLuego esCaminoMinimo(distancias, origen, destino, res)]}
+
+    \pred{esMatrizDistanciaValida}{mat: \TLista{\TLista{\ent}}}{esMatrizValida(mat) \yLuego valoresNoNegativos(mat)}
+
+    \pred{valoresNoNegativos}{s: \TLista{\TLista{\ent}}}{\paraTodo[unalinea]{i, j}{\ent}{0 \leq i, j < |s| \implicaLuego s[i][j] \geq 0}}
+
+    \pred{esCaminoMinimo}{distancias: \TLista{\TLista{\ent}}, origen: \ent, destino: \ent, res: \TLista{\ent}}{\paraTodo[unalinea]{s}{\TLista{\ent}}{esCamino(s, distancias, origen, destino) \implicaLuego pesoTotal(res, distancias) \leq pesoTotal(s, distancias)}}
+
+    \pred{existeCamino}{distancias: \TLista{\TLista{\ent}}, origen: \ent, destino: \ent}{\existe[unalinea]{s}{\TLista{\ent}}{esCamino(s, distancias, origen, destino)}}
+
+    \aux{pesoTotal}{s: \TLista{\ent}, distancias: \TLista{\TLista{\ent}}}{\ent}{\sum_{i=0}^{|s|-2} distancias[s[i]][s[i+1]]}
+\end{proc}
+
+\newpage
+\section{Demostraciones de correctitud}
+\subsection{Ejercicio 1}
+
+\subsubsection{Planteamos la invariante del ciclo}
+
+\begin{equation}
+    I \equiv \{0 \leq i \leq |s| \yLuego res = \sum_{j=0}^{i-1} s[j].habitantes\}
+\end{equation}
+
+\subsubsection{Probamos que P_c \implica I}
+
+P \equiv \{\\
+\existe[unalinea]{i}{\ent}{0 \leq i < |ciudades| \yLuego ciudades[i].habitantes > 50000} \land \\
+\paraTodo[unalinea]{i}{\ent}{0 \leq i < |ciudades| \implicaLuego ciudades[i].habitantes \geq 0} \land \\
+\paraTodo[unalinea]{i, j}{\ent}{0 \leq i < j < |ciudades| \implicaLuego ciudades[i].nombre \neq ciudades[j].nombre}\\
+\}  
+
+\begin{itemize}
+    \item i = 0 \implica 0 \leq i \leq |s|
+    
+    \item res = 0 \land i = 0 \implica $\sum_{j=0}^{i-1} s[j]_1 = \sum_{j=0}^{-1}s[j]_1 = 0 = res$
+\end{itemize}
+
+\subsubsection{Probamos que \{ I \land B \} S \{I\}}
+Quiero ver que {I \land B} \implica wp(S, I). Para hacerlo, separo los estados de S y me fijo en la precondicion mas debil de los estados con la invariante
+
+\begin{itemize}
+    \item $S_1$: res = res + ciudad[i].habitantes
+    \item $S_2$: i = i + 1
+    \item wp(S, I) \equiv wp($S_1$, $S_2$, I) \equiv wp($S_1$, wp($S_2$, I)) (Por axioma 3)
+\end{itemize}
+Ahora calculo el wp de adentro hacia afuera.
+
+\begin{itemize}
+    \item wp($S_2$, I) \equiv wp(i := i+1, 0 \leq i \leq |s| \land res = \sum$_{j=0}^{i-1}s[j]_1$)
+    \item wp(i := i+1, I) \equiv def(i+1) \yLuego $I_{i+1}^i$ (Por axioma 1)
+    \item wp($S_2$, I) \equiv def(i+1) \yLuego 0 \leq i + 1 \leq |s| \land res = \sum$_{j=0}^{i}s[j]_1$ 
+    \item wp($S_2$, I) \equiv T \yLuego 0 \leq i + 1 \leq |s| \land res = \sum$_{j=0}^{i}s[j]_1$ 
+    \item wp($S_2$, I) \equiv 0 \leq i + 1 \leq |s| \land res = \sum$_{j=0}^{i}s[j]_1$ 
+\end{itemize}
+
+Llamo wp($S_2$, I) = Q. 
+Ahora me fijo en wp($S_1$, Q)
+\begin{itemize}
+    \item wp($S_1$, Q) \equiv wp(res := res + ciudades[i].habitantes, 0 \leq i + 1 \leq |s| \land res = \sum$_{j=0}^{i}s[j]_1$)
+    \item wp(res := res + ciudades[i].habitantes, Q) \equiv def(res + ciudades[i].habitantes) \yLuego $Q_{res + ciudad[i]habitantes}^{res}$ (Por axioma 1)
+    \item wp($S_1$, Q) \equiv 0 \leq i \leq |ciudades| \land 0 \leq i < |ciudades| \land res + ciudades[i].habitantes = \sum$_{j=0}^{i}s[j]_1$
+    \item wp($S_1$, Q) \equiv 0 \leq i < |ciudades| \yLuego res = (\sum$_{j=0}^{i}ciudades[i].habitantes)$ - ciudades[i].habitantes 
+
+    (OJO, esto último vale, pues i \geq 0)
+    
+    \item wp($S_1$, Q) \equiv 0 \leq i < |ciudades| \yLuego res = \sum$_{j=0}^{i-1}ciudades[i].habitantes$
+    \item wp($S_1$, Q) \equiv wp(S, I)
+\end{itemize}
+
+\subsubsection{Ahora probamos I \land \neg B \implica Q_c}
+\begin{itemize}
+    \item
+\end{itemize}
+
+\end{document}
